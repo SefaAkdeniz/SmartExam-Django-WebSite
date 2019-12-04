@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <title>Smart Exam</title>
+</head>
+<body>
+    <header>
+        <div class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container">
+                <a href="{% url 'index' %}" class="navbar-brand">Smart Exam App</a>
+                <ul class="navbar-nav mr-auto">
+                    <li 
+                        {% if request.path == '/' %}
+                            class="nav-item active"
+                        {% else %}
+                            class="nav-item"
+                        {% endif %}
+                    >
+                        <a href="{% url 'exam' %}" class="nav-link">Sınava Gir</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'index' %}" class="nav-link">İstatistik Gör</a>
+                    </li>          
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="container mt-4">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </main>
+    <footer></footer>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>  
+</body>
+</html>
