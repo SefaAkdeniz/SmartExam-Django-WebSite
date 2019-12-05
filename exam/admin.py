@@ -8,6 +8,7 @@ class QuestionAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('category',)
     list_per_page = 10
 
 class Student_LogAdmin(admin.ModelAdmin):

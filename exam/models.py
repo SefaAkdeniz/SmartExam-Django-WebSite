@@ -10,6 +10,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.category
+    
+    class Meta:
+        verbose_name = 'Kategori'
+        verbose_name_plural = 'Kategori'
 
 class Question(models.Model):
     image = models.ImageField(upload_to=get_image_path, blank=True, null=True,verbose_name='Fotograf')
@@ -23,9 +27,18 @@ class Question(models.Model):
     def __str__(self):
         return self.text
 
+    class Meta:
+        verbose_name = 'Soru'
+        verbose_name_plural = 'Soru'
+
 class Student_Log(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE,verbose_name='Soru')
     user = models.ForeignKey("auth.User", on_delete=models.CASCADE,verbose_name='Ogrenci')
     date = models.DateTimeField(blank=True, null=True,verbose_name='Tarih')
     answer = models.BooleanField(verbose_name='Dogru')
+
+
+    class Meta:
+        verbose_name = 'Ogrenci Kayitlari'
+        verbose_name_plural = 'Ogrenci Kayitlari'
 
