@@ -25,24 +25,34 @@
                     </li>                           
                 </ul>
                 <ul class="navbar-nav">
-                    <li 
-                        {% if request.path == '/user/login/' %}
-                            class="nav-item active"
-                        {% else %}
-                            class="nav-item"
-                        {% endif %}
-                    >
-                        <a href="{% url 'login' %}" class="nav-link">Giriş Yap</a>
-                    </li>
-                    <li 
-                    {% if request.path == '/user/register/' %}
-                        class="nav-item active"
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="javascript:{document.getElementById('logout').submit()}" class="nav-link">({{user.username}}) Çıkış Yap</a>
+                            <form action="{% url 'logout' %}" method="POST" id="logout">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </li> 
                     {% else %}
-                        class="nav-item"
-                    {% endif %}
-                >
-                    <a href="{% url 'register' %}" class="nav-link">Kayıt Ol</a>
-                </li>                        
+                        <li 
+                            {% if request.path == '/user/login/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'login' %}" class="nav-link">Giriş Yap</a>
+                        </li>
+                        <li 
+                            {% if request.path == '/user/register/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'register' %}" class="nav-link">Kayıt Ol</a>
+                        </li> 
+                    {% endif %}                                         
                 </ul>
             </div>
         </div>
