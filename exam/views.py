@@ -17,7 +17,7 @@ def index(request):
     else:
         if Student_Log.objects.filter(user=request.user).exists()==0:
             messages.add_message(request,messages.SUCCESS,'ilk sinav')
-            sorular=
+            sorular = Question.objects.order_by
             return render(request,'exam.html')
         if Student_Log.objects.filter(user=request.user,date__year=timezone.now().year,date__month=timezone.now().month,date__day=timezone.now().day).exists()==0:
             messages.add_message(request,messages.SUCCESS,'normal sinav')
