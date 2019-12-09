@@ -3,7 +3,7 @@ import os
 # Create your models here.
 
 def get_image_path(instance, filename):
-    return 'photos/'+filename
+    return 'static/img/'+filename
 
 class Category(models.Model):
     category = models.CharField(max_length=50,verbose_name='Kategori', unique=True)

@@ -1,5 +1,234 @@
-{% extends 'layout.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script   src="https://code.jquery.com/jquery-3.4.1.min.js"   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="   crossorigin="anonymous"></script>
+  <script>
+      
+      $(document).ready(function() {
+        $("#anasayfayaGit").hide();
+        
+        var questionIndex = 0;
+        var idArray = $("#soruID").html().replace("[", '').replace("]", '').split(",");
+        var answers = [];
 
-{% block content %}
+        var trueIndex = Math.floor(Math.random() * 4);
+        cevaplariYerlestir(questionIndex, trueIndex);
+        
+        $("#SonrakiSoruButton").click(function() {
+            
+            switch(trueIndex) {
+            case 0:
+            if ($("#optionACheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            break;
+            case 1:
+            if ($("#optionBCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            break;
+            case 2:
+            if ($("#optionCCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            break;
+            case 3:
+            if ($("#optionDCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            break;
+            default:
+            break
+            }
+            trueIndex = Math.floor(Math.random() * 4);
+            questionIndex = questionIndex + 1;
 
-{% endblock content %}
+            if (questionIndex > idArray.length)
+            {
+                $.post('http://127.0.0.1:8000/exam/', {answers:answers});
+                $("#SonrakiSoruButton").hide()
+                $("#OncekiSoruButton").hide()
+                $("#anasayfayaGit").show();
+            }
+            cevaplariYerlestir(questionIndex, trueIndex);
+        }); 
+
+        $("#OncekiSoruButton").click(function() {
+        if (questionIndex > 0)
+        {
+            trueIndex = Math.floor(Math.random() * 4);
+            questionIndex = questionIndex - 1;
+            cevaplariYerlestir(questionIndex, trueIndex);
+        }
+        });
+
+
+        $("#anasayfayaGit").click(function() {
+            window.location.replace("http://127.0.0.1:8000");
+        });
+      }); 
+
+      function cevaplariYerlestir(index, trueIndex)
+      {
+        $(':radio').prop('checked',false)
+
+        var soruDizi = $("#sorular").html().replace("[", '').replace("[", '').split(",");
+        var dogruCevapDizi = $("#dogruCevap").html().replace("[", '').replace("]", '').split(",");
+        var hataliCevap1 = $("#hataliCevap1").html().replace("[", '').replace("]", '').split(",");
+        var hataliCevap2 = $("#hataliCevap2").html().replace("[", '').replace("]", '').split(",");
+        var hataliCevap3 = $("#hataliCevap3").html().replace("[", '').replace("]", '').split(",");
+        var imageRefArray = $("#imageRef").html().split(",");
+
+
+        var imageURL = "http://127.0.0.1:8000/".concat(imageRefArray[index])
+        imageURL = imageURL.replace(' ', '').replace('"', '')
+        $("#questionImage").attr("src", imageURL);
+
+        $('#SoruMetni').html(soruDizi[index]);
+        switch(trueIndex) {
+            case 0:
+            $('#OptionA').html(dogruCevapDizi[index]);
+            $('#OptionB').html(hataliCevap1[index]);
+            $('#OptionC').html(hataliCevap2[index]);
+            $('#OptionD').html(hataliCevap3[index]);
+            break;
+            case 1:
+            $('#OptionA').html(hataliCevap1[index]);
+            $('#OptionB').html(dogruCevapDizi[index]);
+            $('#OptionC').html(hataliCevap2[index]);
+            $('#OptionD').html(hataliCevap3[index]);
+            break;
+            case 2:
+            $('#OptionA').html(hataliCevap1[index]);
+            $('#OptionB').html(hataliCevap2[index]);
+            $('#OptionC').html(dogruCevapDizi[index]);
+            $('#OptionD').html(hataliCevap3[index]);
+            break;
+            case 3:
+            $('#OptionA').html(hataliCevap1[index]);
+            $('#OptionB').html(hataliCevap2[index]);
+            $('#OptionC').html(hataliCevap3[index]);
+            $('#OptionD').html(dogruCevapDizi[index]);
+            break;
+            default:
+            break
+            }
+      }
+
+  </script>
+
+</head>
+<body>
+
+    <header>
+        <div class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container">
+                <a href="{% url 'index' %}" class="navbar-brand">Smart Exam App</a>
+                <ul class="navbar-nav mr-auto">
+                    <li 
+                        {% if request.path == '/exam/' %}
+                            class="nav-item active"
+                        {% else %}
+                            class="nav-item"
+                        {% endif %}
+                    >
+                        <a href="{% url 'exam' %}" class="nav-link">Sınava Gir</a>
+                    </li>                           
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="javascript:{document.getElementById('logout').submit()}" class="nav-link">({{user.username}}) Çıkış</a>
+                            <form action="{% url 'logout' %}" method="POST" id="logout">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </li> 
+                    {% else %}
+                        <li 
+                            {% if request.path == '/user/login/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'login' %}" class="nav-link">Giriş</a>
+                        </li>
+                        <li 
+                            {% if request.path == '/user/register/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'register' %}" class="nav-link">Kaydol</a>
+                        </li> 
+                    {% endif %}                                         
+                </ul>
+            </div>
+        </div>
+    </header>
+  <div class="container", style="background: #ffffff; max-width: 500; height: auto;">
+    <p style="text-align: center;"><img src="" style="float:center;width:300px;height:300px; align-items: center; margin: 3%;" id="questionImage"></p>
+    <br>
+    <p id="SoruMetni" style="text-align: center;">""</p>
+
+    <table class="table table-striped table-light">
+            <tbody>
+              <tr>
+                  <td>
+                      <div class="form-check">
+                          <input type="radio" class="form-check-input" id="optionACheck" name="materialRadios">
+                            <label class="form-check-label" for="materialUnchecked">A)</label>
+                          </div></td>
+                <td id="OptionA">Mark</td>
+              </tr>
+              <tr>
+                    <td>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input" id="optionBCheck" name="materialRadios">
+                              <label class="form-check-label" for="materialUnchecked">B)</label>
+                            </div>
+                        </td>
+                  <td id="OptionB">Mark</td>
+                </tr>
+                <tr>
+                        <td>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="optionCCheck" name="materialRadios">
+                                  <label class="form-check-label" for="materialUnchecked">C)</label>
+                                </div></td>
+                      <td id="OptionC">Mark</td>
+                    </tr>
+                    <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="optionDCheck" name="materialRadios">
+                                      <label class="form-check-label" for="materialUnchecked">D)</label>
+                                    </div></td>
+                          <td id="OptionD">Mark</td>
+                        </tr>
+            </tbody>
+          </table>
+          <div class="container">
+                <div class="row">
+
+                    <div class="col-md-6">
+                            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-block: 3%; margin-bottom: 10%;" id="OncekiSoruButton">Onceki Soru</button>
+                    </div>
+                    <div class="col-md-6">
+                            <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-block: 3%; margin-bottom: 10%;" id="SonrakiSoruButton">Sonraki Soru</button>
+                    </div>
+
+                </div>
+        </div>
+          
+          <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-block: 3%; margin-bottom: 10%;" id="anasayfayaGit">Sorular Bitti, Anasayfaya don</button>
+</div>
+    <p hidden id="sorular">{{text}}</p>
+    <p hidden id="soruID">{{id}}</p>
+    <p hidden id="imageRef">{{image}}</p>
+    <p hidden id="dogruCevap">{{trueAnswer}}</p>
+    <p hidden id="hataliCevap1">{{falseAnswer1}}</p>
+    <p hidden id="hataliCevap2">{{falseAnswer2}}</p>
+    <p hidden id="hataliCevap3">{{falseAnswer3}}</p>
+</body>
+</html>
