@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 from django.utils import formats
 from django.views.decorators.csrf import csrf_exempt
 
-
 # Create your views here.
 
 @login_required(login_url="login")
@@ -43,20 +42,18 @@ def index(request):
                         idList.append(queryQuestion.id)
                         break
             imageList=""
-            textList =[]
-            trueAnswerList=[]
-            falseAnswer1List=[]
-            falseAnswer2List=[]
-            falseAnswer3List=[] 
+            textList =""
+            trueAnswerList=""
+            falseAnswer1List=""
+            falseAnswer2List=""
+            falseAnswer3List="" 
             for each in range(0,20):
                 imageList = imageList + "," + (str(question[each].image))
-                textList.append(question[each].text)
-                trueAnswerList.append(question[each].trueAnswer)
-                falseAnswer1List.append(question[each].falseAnswer1)
-                falseAnswer2List.append(question[each].falseAnswer2)
-                falseAnswer3List.append(question[each].falseAnswer3)
-
-            print(imageList)
+                textList = textList + "," + (str(question[each].text))
+                trueAnswerList = trueAnswerList + "," + (str(question[each].trueAnswer))
+                falseAnswer1List = falseAnswer1List + "," + (str(question[each].falseAnswer1))
+                falseAnswer2List = falseAnswer2List + "," + (str(question[each].falseAnswer2))
+                falseAnswer3List = falseAnswer3List + "," + (str(question[each].falseAnswer3))
             
             return render(request,'exam.html',{"id":idList,"image":imageList,"text":textList,"trueAnswer":trueAnswerList,"falseAnswer1":falseAnswer1List,"falseAnswer2":falseAnswer2List,"falseAnswer3":falseAnswer3List})
         if Student_Log.objects.filter(user=request.user,date__year=timezone.now().year,date__month=timezone.now().month,date__day=timezone.now().day).exists()==0:
