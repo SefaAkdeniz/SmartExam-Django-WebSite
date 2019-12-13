@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
-        print(dict(request.POST)["cevaplar[]"])
+        print(dict(request.POST)["trueAnswer[]", "wronAnswer[]"])
         return redirect("index.html")
     else:
         if Student_Log.objects.filter(user=request.user).exists()==0:
@@ -41,21 +41,41 @@ def index(request):
                         question.append(queryQuestion)
                         idList.append(queryQuestion.id)
                         break
+            questionIDList = ""
             imageList=""
             textList =""
             trueAnswerList=""
             falseAnswer1List=""
             falseAnswer2List=""
             falseAnswer3List="" 
-            for each in range(0,20):
-                imageList = imageList + "," + (str(question[each].image))
-                textList = textList + "," + (str(question[each].text))
-                trueAnswerList = trueAnswerList + "," + (str(question[each].trueAnswer))
-                falseAnswer1List = falseAnswer1List + "," + (str(question[each].falseAnswer1))
-                falseAnswer2List = falseAnswer2List + "," + (str(question[each].falseAnswer2))
-                falseAnswer3List = falseAnswer3List + "," + (str(question[each].falseAnswer3))
+
+            if str(question[0].image) == "":
+                imageList = "NaN"
+            else:
+                imageList = str(question[0].image)
+
+            textList = str(question[0].text)
+            trueAnswerList = str(question[0].trueAnswer)
+            falseAnswer1List = str(question[0].falseAnswer1)
+            falseAnswer2List = str(question[0].falseAnswer2)
+            falseAnswer3List = str(question[0].falseAnswer3)
+            questionIDList = str(question[0].id)
+
+            for each in range(1,20):
+                if str(question[each].image) == "":
+                    imageList = imageList + "*-*" + "NaN"
+                else:
+                    imageList = imageList + "*-*" + (str(question[each].image))
+
+                textList = textList + "*-*" + (str(question[each].text))
+                trueAnswerList = trueAnswerList + "*-*" + (str(question[each].trueAnswer))
+                falseAnswer1List = falseAnswer1List + "*-*" + (str(question[each].falseAnswer1))
+                falseAnswer2List = falseAnswer2List + "*-*" + (str(question[each].falseAnswer2))
+                falseAnswer3List = falseAnswer3List + "*-*" + (str(question[each].falseAnswer3))
+                questionIDList = questionIDList + "*-*" + (str(question[each].id))
             
-            return render(request,'exam.html',{"id":idList,"image":imageList,"text":textList,"trueAnswer":trueAnswerList,"falseAnswer1":falseAnswer1List,"falseAnswer2":falseAnswer2List,"falseAnswer3":falseAnswer3List})
+            print(imageList)
+            return render(request,'exam.html',{"id":questionIDList,"image":imageList,"text":textList,"trueAnswer":trueAnswerList,"falseAnswer1":falseAnswer1List,"falseAnswer2":falseAnswer2List,"falseAnswer3":falseAnswer3List})
         if Student_Log.objects.filter(user=request.user,date__year=timezone.now().year,date__month=timezone.now().month,date__day=timezone.now().day).exists()==0:
             messages.add_message(request,messages.SUCCESS,'normal sinav')
             return render(request,'exam.html')           

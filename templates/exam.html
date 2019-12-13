@@ -14,8 +14,9 @@
         $("#anasayfayaGit").hide();
         
         var questionIndex = 0;
-        var idArray = $("#soruID").html().replace("[", '').replace("]", '').split(",");
-        var answers = [];
+        var idArray = $("#soruID").html().split("*-*");
+        var trueAnswers = [];
+        var wrongAnswers = [];
 
         var trueIndex = Math.floor(Math.random() * 4);
         cevaplariYerlestir(questionIndex, trueIndex);
@@ -24,16 +25,20 @@
             
             switch(trueIndex) {
             case 0:
-            if ($("#optionACheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            if ($("#optionACheck").is(":checked")) { trueAnswers.push(idArray[questionIndex]) }
+            else { wrongAnswers.push(idArray[questionIndex]) }
             break;
             case 1:
-            if ($("#optionBCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            if ($("#optionBCheck").is(":checked")) { trueAnswers.push(idArray[questionIndex]) }
+            else { wrongAnswers.push(idArray[questionIndex]) }
             break;
             case 2:
-            if ($("#optionCCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            if ($("#optionCCheck").is(":checked")) { trueAnswers.push(idArray[questionIndex]) }
+            else { wrongAnswers.push(idArray[questionIndex]) }
             break;
             case 3:
-            if ($("#optionDCheck").is(":checked")) { answers.push(idArray[questionIndex]) }
+            if ($("#optionDCheck").is(":checked")) { trueAnswers.push(idArray[questionIndex]) }
+            else { wrongAnswers.push(idArray[questionIndex]) }
             break;
             default:
             break
@@ -41,14 +46,18 @@
             trueIndex = Math.floor(Math.random() * 4);
             questionIndex = questionIndex + 1;
 
-            if (questionIndex > idArray.length)
+            if (questionIndex >= idArray.length)
             {
-                $.post('http://127.0.0.1:8000/exam/', {answers:answers});
+                $.post('http://127.0.0.1:8000/exam/', {trueAnswer:trueAnswers});
+                $.post('http://127.0.0.1:8000/exam/', {wronAnswer:wrongAnswers});
                 $("#SonrakiSoruButton").hide()
                 $("#OncekiSoruButton").hide()
                 $("#anasayfayaGit").show();
             }
-            cevaplariYerlestir(questionIndex, trueIndex);
+            else
+            {
+                cevaplariYerlestir(questionIndex, trueIndex);
+            }
         }); 
 
         $("#OncekiSoruButton").click(function() {
@@ -70,17 +79,24 @@
       {
         $(':radio').prop('checked',false)
 
-        var soruDizi = $("#sorular").html().replace("[", '').replace("[", '').split(",");
-        var dogruCevapDizi = $("#dogruCevap").html().replace("[", '').replace("]", '').split(",");
-        var hataliCevap1 = $("#hataliCevap1").html().replace("[", '').replace("]", '').split(",");
-        var hataliCevap2 = $("#hataliCevap2").html().replace("[", '').replace("]", '').split(",");
-        var hataliCevap3 = $("#hataliCevap3").html().replace("[", '').replace("]", '').split(",");
-        var imageRefArray = $("#imageRef").html().split(",");
+        var soruDizi = $("#sorular").html().split("*-*");
+        var dogruCevapDizi = $("#dogruCevap").html().split("*-*");
+        var hataliCevap1 = $("#hataliCevap1").html().split("*-*");
+        var hataliCevap2 = $("#hataliCevap2").html().split("*-*");
+        var hataliCevap3 = $("#hataliCevap3").html().split("*-*");
+        var imageRefArray = $("#imageRef").html().split("*-*");
 
+        var imageURL = "http://127.0.0.1:8000/" + imageRefArray[index]
 
-        var imageURL = "http://127.0.0.1:8000/".concat(imageRefArray[index])
-        imageURL = imageURL.replace(' ', '').replace('"', '')
-        $("#questionImage").attr("src", imageURL);
+        $("#questionImage").show();
+        if (imageRefArray[index] != "NaN")
+        {
+            $("#questionImage").attr("src", imageURL);
+        }
+        else
+        {
+            $("#questionImage").hide();
+        }
 
         $('#SoruMetni').html(soruDizi[index]);
         switch(trueIndex) {
@@ -178,7 +194,8 @@
                       <div class="form-check">
                           <input type="radio" class="form-check-input" id="optionACheck" name="materialRadios">
                             <label class="form-check-label" for="materialUnchecked">A)</label>
-                          </div></td>
+                          </div>
+                    </td>
                 <td id="OptionA">Mark</td>
               </tr>
               <tr>
