@@ -48,8 +48,8 @@
 
             if (questionIndex >= idArray.length)
             {
-                $.post('http://127.0.0.1:8000/exam/', {trueAnswer:trueAnswers});
-                $.post('http://127.0.0.1:8000/exam/', {wronAnswer:wrongAnswers});
+                var answers = trueAnswers.toString() + "*-*" + wrongAnswers.toString()
+                $.post('http://127.0.0.1:8000/exam/', {answers:answers});
                 $("#SonrakiSoruButton").hide()
                 $("#OncekiSoruButton").hide()
                 $("#anasayfayaGit").show();

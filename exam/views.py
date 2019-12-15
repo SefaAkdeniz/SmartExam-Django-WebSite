@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def index(request):
     if request.method == 'POST':
-        print(dict(request.POST)["trueAnswer[]", "wronAnswer[]"])
+        print(request.POST)
         return redirect("index.html")
     else:
         if Student_Log.objects.filter(user=request.user).exists()==0:
