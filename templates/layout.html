@@ -24,7 +24,16 @@
                         {% endif %}
                     >
                         <a href="{% url 'exam' %}" class="nav-link">Sınava Gir</a>
-                    </li>                           
+                    </li> 
+                    <li 
+                        {% if request.path == '/stat/' %}
+                            class="nav-item active"
+                        {% else %}
+                            class="nav-item"
+                        {% endif %}
+                    >
+                        <a href="{% url 'stat' %}" class="nav-link">İstatistik</a>
+                    </li>                          
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
