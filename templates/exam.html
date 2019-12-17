@@ -66,6 +66,13 @@
             trueIndex = Math.floor(Math.random() * 4);
             questionIndex = questionIndex - 1;
             cevaplariYerlestir(questionIndex, trueIndex);
+
+            wrongAnswers = jQuery.grep(wrongAnswers, function(value) {
+                return value != idArray[questionIndex]
+            });
+            trueAnswers = jQuery.grep(trueAnswers, function(value) {
+                return value != idArray[questionIndex]
+            });
         }
         });
 
