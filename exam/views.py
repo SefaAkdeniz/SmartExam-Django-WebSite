@@ -12,6 +12,7 @@ from collections import Counter
 # Create your views here.
 
 @login_required(login_url="login")
+@csrf_exempt
 def stat(request):
     falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)      
     falseCategoryLog=[]
@@ -25,37 +26,42 @@ def stat(request):
         if x not in output:
             output.append(x)  
     dateLog=output
+
+    dateArray = ""
+    for date in dateLog:
+        dateArray += "*-*" + date
+
+
     print(dateLog)
 
     
     falseCategoryLog=Counter(falseCategoryLog)
 
-    falseCategoryLabel=[]
+    falseCategoryLabel = ""
     categoryFalse=[]
     for key, value in falseCategoryLog.items():
         categoryFalse.append(value)
-        falseCategoryLabel.append(key)
+        falseCategoryLabel += "*-*" + key
 
     truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)      
     trueCategoryLog=[]
-    dateLog=[]
     for each in truePastQuestions:
         trueCategoryLog.append(str(each.question.category))
 
     trueCategoryLog=Counter(trueCategoryLog)
 
-    trueCategoryLabel=[]
+    trueCategoryLabel = ""
     categoryTrue=[]
     for key, value in trueCategoryLog.items():
         categoryTrue.append(value)
-        trueCategoryLabel.append(key)
+        trueCategoryLabel += "*-*" + key
         
     print(falseCategoryLabel)
     print(categoryFalse)
     print(trueCategoryLabel)
     print(categoryTrue)
     
-    return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateLog})
+    return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateArray})
 
 
 @login_required(login_url="login")

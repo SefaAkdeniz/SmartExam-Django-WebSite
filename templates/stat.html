@@ -12,7 +12,8 @@
   <script type="text/javascript" src="{% static 'js/jquery.canvasjs.min.js'%}"></script>
   <script>
       $(document).ready(function() {
-
+          trueChartTitle = "Genel Doğruların Grafiği"
+          falseChartTitle = "Genel Yanlışların Grafiği"
         load();
         
         $.each( dateArray, function( key, value ) {
@@ -21,37 +22,54 @@
         
         $("#DateSelector").on('change', function() {
             $.post('http://127.0.0.1:8000/exam/stat/', {date:this.value});
+
+            trueChartTitle = this.value + "Tarihli Doğrular";
+            falseChartTitle = this.value + "Tarihli Yanlışlar";
             load();
         });
 
         function load()
         {
-            $("#categoryLabel").html("{{categoryLabel}}");
-            $("#categoryLabel").innerHTML
+            $("#categoryLabelFalse").html("{{falseCategoryLabel}}");
+            $("#trueCategoryLabel").html("{{trueCategoryLabel}}");
+
             dataPointsFalse = [];
             dataPointsTrue = [];
-            falseAnswers = {{categoryFalse}};   
+
+            falseAnswers = {{categoryFalse}};  
+            trueAnswers = {{categoryTrue}}; 
 
             dateArray = $("#dateLog").html().split("*-*");
             dateArray.shift();
 
-            label = $("#categoryLabel").html().split("*-*");
-            label.shift(); 
+            falseLabel = $("#categoryLabelFalse").html().split("*-*");
+            falseLabel.shift(); 
+
+            trueLabel = $("#trueCategoryLabel").html().split("*-*");
+            trueLabel.shift(); 
+
+
             count = 0;
             $.each( {{categoryFalse}}, function( key, value ) {
-             dataPointsFalse.push({label: label[count], y: falseAnswers[count]})
-             dataPointsTrue.push({label: label[count], y: -10})
+             dataPointsFalse.push({label: falseLabel[count], y: falseAnswers[count]})
+             dataPointsTrue.push({label: trueLabel[count], y: trueAnswers[count]})
              count = count + 1;
             });
 
             var options = {
-	        title: {text: "Title"},
-	        data: [{ type: "column", dataPoints: dataPointsFalse },
-            { type: "column", dataPoints: dataPointsTrue }
-	        ]
+	        title: {text: falseChartTitle},
+	        data: [{ type: "column", dataPoints: dataPointsFalse }]
          };
 
-            $("#chart").CanvasJSChart(options);
+            $("#chartFalse").CanvasJSChart(options);
+
+
+            var options = {
+	        title: {text: trueChartTitle},
+	        data: [{ type: "column", dataPoints: dataPointsTrue }]
+         };
+
+            $("#chartTrue").CanvasJSChart(options);
         }
       });
           
@@ -118,9 +136,16 @@
     
 
     <div style = "margin-top : 100px; margin-bottom:100px;" class = "container">
-        <div id="chart" style="height: 370px; width: 100%;"></div>
+        <div id="chartFalse" style="height: 370px; width: 100%;"></div>
     </div>
-    <p hidden id="categoryLabel">{{categoryLabel}}</p>
+
+    <div style = "margin-top : 100px; margin-bottom:100px;" class = "container">
+        <div id="chartTrue" style="height: 370px; width: 100%;"></div>
+    </div>
+
+
+    <p hidden id="categoryLabelFalse">{{falseCategoryLabel}}</p>
+    <p hidden id="trueCategoryLabel">{{trueCategoryLabel}}</p>
     <p hidden id="dateLog">{{dateLog}}</p>
 </body>
 </html>
