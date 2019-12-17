@@ -8,19 +8,28 @@ from datetime import datetime, timedelta
 from django.utils import formats
 from django.views.decorators.csrf import csrf_exempt
 from collections import Counter
+from django.http import HttpResponse
+from django.template import loader
 
 # Create your views here.
-
+falsePastQuestions=[]
+truePastQuestions=[]
 @login_required(login_url="login")
 @csrf_exempt
 def stat(request):
-    falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)      
-    falseCategoryLog=[]
-    dateLog=[]
-    for each in falsePastQuestions:
-        falseCategoryLog.append(str(each.question.category))
-        dateLog.append(str(each.date)[0:10])
+    if request.method == 'POST':   
+        year,month,day=request.POST["date"].split("-")
+        falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False,date__year=year,date__month=month,date__day=day)
+        truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True,date__year=year,date__month=month,date__day=day) 
+    else:
+        falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)
+        truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)   
 
+    dateLog=[]
+    PastQuestions = Student_Log.objects.filter(user=request.user,)
+    for each in PastQuestions:
+      dateLog.append(str(each.date)[0:10])
+    
     output = []
     for x in dateLog:
         if x not in output:
@@ -30,38 +39,41 @@ def stat(request):
     dateArray = ""
     for date in dateLog:
         dateArray += "*-*" + date
+       
+    falseCategoryLog=[]
+    for each in falsePastQuestions:
+        falseCategoryLog.append(str(each.question.category))
 
-
-    print(dateLog)
-
-    
     falseCategoryLog=Counter(falseCategoryLog)
-
     falseCategoryLabel = ""
     categoryFalse=[]
     for key, value in falseCategoryLog.items():
         categoryFalse.append(value)
         falseCategoryLabel += "*-*" + key
 
-    truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)      
+       
     trueCategoryLog=[]
     for each in truePastQuestions:
         trueCategoryLog.append(str(each.question.category))
 
     trueCategoryLog=Counter(trueCategoryLog)
-
     trueCategoryLabel = ""
     categoryTrue=[]
     for key, value in trueCategoryLog.items():
         categoryTrue.append(value)
         trueCategoryLabel += "*-*" + key
-        
+    
+
+    
     print(falseCategoryLabel)
     print(categoryFalse)
     print(trueCategoryLabel)
     print(categoryTrue)
-    
     return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateArray})
+
+
+
+
 
 
 @login_required(login_url="login")

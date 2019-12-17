@@ -26,6 +26,7 @@
             trueChartTitle = this.value + "Tarihli Doğrular";
             falseChartTitle = this.value + "Tarihli Yanlışlar";
             load();
+            
         });
 
         function load()
@@ -133,6 +134,15 @@
         <select class="form-control" id="DateSelector">
         </select>
     </div>
+    <form action="{% url 'stat' %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            
+            <input type="text" name="date" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">Kaydol</button>
+    </form>
     
 
     <div style = "margin-top : 100px; margin-bottom:100px;" class = "container">
@@ -144,8 +154,8 @@
     </div>
 
 
-    <p hidden id="categoryLabelFalse">{{falseCategoryLabel}}</p>
-    <p hidden id="trueCategoryLabel">{{trueCategoryLabel}}</p>
+    <p  id="categoryLabelFalse">{{falseCategoryLabel}}</p>
+    <p  id="trueCategoryLabel">{{trueCategoryLabel}}</p>
     <p hidden id="dateLog">{{dateLog}}</p>
 </body>
 </html>
