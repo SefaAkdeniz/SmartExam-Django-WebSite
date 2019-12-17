@@ -13,11 +13,11 @@ from collections import Counter
 
 @login_required(login_url="login")
 def stat(request):
-    pastQuestions = Student_Log.objects.filter(user=request.user, answer=False)      
-    categoryLog=[]
+    falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)      
+    falseCategoryLog=[]
     dateLog=[]
-    for each in pastQuestions:
-        categoryLog.append(str(each.question.category))
+    for each in falsePastQuestions:
+        falseCategoryLog.append(str(each.question.category))
         dateLog.append(str(each.date)[0:10])
 
     output = []
@@ -28,17 +28,34 @@ def stat(request):
     print(dateLog)
 
     
-    categoryLog=Counter(categoryLog)
+    falseCategoryLog=Counter(falseCategoryLog)
 
-    categoryLabel=[]
+    falseCategoryLabel=[]
     categoryFalse=[]
-    for key, value in categoryLog.items():
+    for key, value in falseCategoryLog.items():
         categoryFalse.append(value)
-        categoryLabel.append(key)
+        falseCategoryLabel.append(key)
 
+    truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)      
+    trueCategoryLog=[]
+    dateLog=[]
+    for each in truePastQuestions:
+        trueCategoryLog.append(str(each.question.category))
+
+    trueCategoryLog=Counter(trueCategoryLog)
+
+    trueCategoryLabel=[]
+    categoryTrue=[]
+    for key, value in trueCategoryLog.items():
+        categoryTrue.append(value)
+        trueCategoryLabel.append(key)
+        
+    print(falseCategoryLabel)
     print(categoryFalse)
-    print(categoryLabel)
-    return render(request,'stat.html',{"categoryLabel":categoryLabel,"categoryFalse":categoryFalse,"dateLog":dateLog})
+    print(trueCategoryLabel)
+    print(categoryTrue)
+    
+    return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateLog})
 
 
 @login_required(login_url="login")
