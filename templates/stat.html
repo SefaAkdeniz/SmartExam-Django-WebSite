@@ -1,12 +1,126 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Stat</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Statistics</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script   src="https://code.jquery.com/jquery-3.4.1.min.js"   integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="   crossorigin="anonymous"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.canvasjs.min.js'%}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery.canvasjs.min.js'%}"></script>
+  <script>
+      $(document).ready(function() {
+
+        load();
+        
+        $.each( dateArray, function( key, value ) {
+            $("#DateSelector").append(new Option(value));
+        });
+        
+        $("#DateSelector").on('change', function() {
+            $.post('http://127.0.0.1:8000/exam/stat/', {date:this.value});
+            load();
+        });
+
+        function load()
+        {
+            $("#categoryLabel").html("{{categoryLabel}}");
+            $("#categoryLabel").innerHTML
+            dataPointsFalse = [];
+            dataPointsTrue = [];
+            falseAnswers = {{categoryFalse}};   
+
+            dateArray = $("#dateLog").html().split("*-*");
+            dateArray.shift();
+
+            label = $("#categoryLabel").html().split("*-*");
+            label.shift(); 
+            count = 0;
+            $.each( {{categoryFalse}}, function( key, value ) {
+             dataPointsFalse.push({label: label[count], y: falseAnswers[count]})
+             dataPointsTrue.push({label: label[count], y: -10})
+             count = count + 1;
+            });
+
+            var options = {
+	        title: {text: "Title"},
+	        data: [{ type: "column", dataPoints: dataPointsFalse },
+            { type: "column", dataPoints: dataPointsTrue }
+	        ]
+         };
+
+            $("#chart").CanvasJSChart(options);
+        }
+      });
+          
+
+  </script>
+
 </head>
 <body>
+
+    <header>
+        <div class="navbar navbar-expand-sm bg-primary navbar-dark">
+            <div class="container">
+                <a href="{% url 'index' %}" class="navbar-brand">Smart Exam App</a>
+                <ul class="navbar-nav mr-auto">
+                    <li 
+                        {% if request.path == '/exam/' %}
+                            class="nav-item active"
+                        {% else %}
+                            class="nav-item"
+                        {% endif %}
+                    >
+                        <a href="{% url 'exam' %}" class="nav-link">Sınava Gir</a>
+                    </li>                           
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="javascript:{document.getElementById('logout').submit()}" class="nav-link">({{user.username}}) Çıkış</a>
+                            <form action="{% url 'logout' %}" method="POST" id="logout">
+                                {% csrf_token %}
+                                <input type="hidden">
+                            </form>
+                        </li> 
+                    {% else %}
+                        <li 
+                            {% if request.path == '/user/login/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'login' %}" class="nav-link">Giriş</a>
+                        </li>
+                        <li 
+                            {% if request.path == '/user/register/' %}
+                                class="nav-item active"
+                            {% else %}
+                                class="nav-item"
+                            {% endif %}
+                        >
+                            <a href="{% url 'register' %}" class="nav-link">Kaydol</a>
+                        </li> 
+                    {% endif %}                                         
+                </ul>
+            </div>
+        </div>
+    </header>
     
+    <div class="form-group container", style="width: 40%; display: inline-block; margin: auto;">
+        <label for="drop_list">Tarih:</label>
+        <select class="form-control" id="DateSelector">
+        </select>
+    </div>
+    
+
+    <div style = "margin-top : 100px; margin-bottom:100px;" class = "container">
+        <div id="chart" style="height: 370px; width: 100%;"></div>
+    </div>
+    <p hidden id="categoryLabel">{{categoryLabel}}</p>
+    <p hidden id="dateLog">{{dateLog}}</p>
 </body>
 </html>
