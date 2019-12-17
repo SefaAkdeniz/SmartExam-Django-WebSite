@@ -7,12 +7,38 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.utils import formats
 from django.views.decorators.csrf import csrf_exempt
+from collections import Counter
 
 # Create your views here.
 
 @login_required(login_url="login")
 def stat(request):
-    return render(request,'stat.html')
+    pastQuestions = Student_Log.objects.filter(user=request.user, answer=False)      
+    categoryLog=[]
+    dateLog=[]
+    for each in pastQuestions:
+        categoryLog.append(str(each.question.category))
+        dateLog.append(str(each.date)[0:10])
+
+    output = []
+    for x in dateLog:
+        if x not in output:
+            output.append(x)  
+    dateLog=output
+    print(dateLog)
+
+    
+    categoryLog=Counter(categoryLog)
+
+    categoryLabel=[]
+    categoryFalse=[]
+    for key, value in categoryLog.items():
+        categoryFalse.append(value)
+        categoryLabel.append(key)
+
+    print(categoryFalse)
+    print(categoryLabel)
+    return render(request,'stat.html',{"categoryLabel":categoryLabel,"categoryFalse":categoryFalse,"dateLog":dateLog})
 
 
 @login_required(login_url="login")
@@ -94,8 +120,7 @@ def index(request):
             z=[]
             for each in pastQuestions:
                 z.append(str(each.question.category))           
-
-            from collections import Counter
+          
             z=Counter(z)  
             z=dict(z)
             inverse = [[value, key] for key, value in z.items()]
