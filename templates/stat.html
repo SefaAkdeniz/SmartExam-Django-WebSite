@@ -93,7 +93,16 @@
                         {% endif %}
                     >
                         <a href="{% url 'exam' %}" class="nav-link">Sınava Gir</a>
-                    </li>                           
+                    </li> 
+                    <li 
+                        {% if request.path == '/exam/stat/' %}
+                            class="nav-item active"
+                        {% else %}
+                            class="nav-item"
+                        {% endif %}
+                    >
+                        <a href="{% url 'stat' %}" class="nav-link">İstatistik</a>
+                    </li>                          
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -154,8 +163,8 @@
     </div>
 
 
-    <p  id="categoryLabelFalse">{{falseCategoryLabel}}</p>
-    <p  id="trueCategoryLabel">{{trueCategoryLabel}}</p>
+    <p hidden id="categoryLabelFalse">{{falseCategoryLabel}}</p>
+    <p hidden id="trueCategoryLabel">{{trueCategoryLabel}}</p>
     <p hidden id="dateLog">{{dateLog}}</p>
 </body>
 </html>

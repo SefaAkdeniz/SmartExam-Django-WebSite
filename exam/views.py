@@ -25,6 +25,9 @@ def stat(request):
         falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)
         truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)   
 
+    falseCount=0
+    trueCount=0
+
     dateLog=[]
     PastQuestions = Student_Log.objects.filter(user=request.user,)
     for each in PastQuestions:
@@ -43,6 +46,7 @@ def stat(request):
     falseCategoryLog=[]
     for each in falsePastQuestions:
         falseCategoryLog.append(str(each.question.category))
+        falseCount +=1
 
     falseCategoryLog=Counter(falseCategoryLog)
     falseCategoryLabel = ""
@@ -50,11 +54,11 @@ def stat(request):
     for key, value in falseCategoryLog.items():
         categoryFalse.append(value)
         falseCategoryLabel += "*-*" + key
-
        
     trueCategoryLog=[]
     for each in truePastQuestions:
         trueCategoryLog.append(str(each.question.category))
+        trueCount += 1
 
     trueCategoryLog=Counter(trueCategoryLog)
     trueCategoryLabel = ""
@@ -62,19 +66,13 @@ def stat(request):
     for key, value in trueCategoryLog.items():
         categoryTrue.append(value)
         trueCategoryLabel += "*-*" + key
+
+    print(falseCount)
+    print(trueCount)
+    result=(trueCount/(falseCount+trueCount))*100
+    print(result)
     
-
-    
-    print(falseCategoryLabel)
-    print(categoryFalse)
-    print(trueCategoryLabel)
-    print(categoryTrue)
-    return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateArray})
-
-
-
-
-
+    return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateArray,"result":result})
 
 @login_required(login_url="login")
 @csrf_exempt
@@ -95,8 +93,7 @@ def index(request):
             trueQuestion,falseQuestion=request.POST["answers"].split("*-*")
             trueQuestion=list(trueQuestion.split(","))
             falseQuestion=list(falseQuestion.split(","))
-        
-        
+    
         for each in trueQuestion:
             answered=Question.objects.filter(id=each).first()
             questionLog = Student_Log(user=request.user, question=answered, answer=True, date=timezone.now())
