@@ -84,6 +84,9 @@
 
       function cevaplariYerlestir(index, trueIndex)
       {
+        $('#bar').attr('val',index * 10);
+
+
         $(':radio').prop('checked',false)
 
         var soruDizi = $("#sorular").html().split("*-*");
@@ -190,6 +193,11 @@
         </div>
     </header>
   <div class="container", style="background: #ffffff; max-width: 500; height: auto;">
+    <br>
+    <br>
+    <div id="myProgress">
+        <div id="myBar" style="background-color: green;">10%</div>
+      </div>
     <p style="text-align: center;"><img src="" style="float:center;width:300px;height:300px; align-items: center; margin: 3%;" id="questionImage"></p>
     <br>
     <p id="SoruMetni" style="text-align: center;">""</p>

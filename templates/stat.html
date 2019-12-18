@@ -12,23 +12,14 @@
   <script type="text/javascript" src="{% static 'js/jquery.canvasjs.min.js'%}"></script>
   <script>
       $(document).ready(function() {
-          trueChartTitle = "Genel Doğruların Grafiği"
-          falseChartTitle = "Genel Yanlışların Grafiği"
+          trueChartTitle = "Doğruların Grafiği"
+          falseChartTitle = "Yanlışların Grafiği"
         load();
         
         $.each( dateArray, function( key, value ) {
             $("#DateSelector").append(new Option(value));
         });
         
-        $("#DateSelector").on('change', function() {
-            $.post('http://127.0.0.1:8000/exam/stat/', {date:this.value});
-
-            trueChartTitle = this.value + "Tarihli Doğrular";
-            falseChartTitle = this.value + "Tarihli Yanlışlar";
-            load();
-            
-        });
-
         function load()
         {
             $("#categoryLabelFalse").html("{{falseCategoryLabel}}");
@@ -137,22 +128,17 @@
             </div>
         </div>
     </header>
-    
-    <div class="form-group container", style="width: 40%; display: inline-block; margin: auto;">
-        <label for="drop_list">Tarih:</label>
-        <select class="form-control" id="DateSelector">
-        </select>
-    </div>
+    <br>
     <form action="{% url 'stat' %}" method="POST">
         {% csrf_token %}
         <div class="form-group">
             
-            <input type="text" name="date" class="form-control" required>
+            <select class="form-control" id="DateSelector" required name="date"></select>
         </div>
-        
-        <button type="submit" class="btn btn-primary btn-block">Kaydol</button>
+        <button type="submit" class="btn btn-primary btn-block">İstatistikleri gör</button>
     </form>
-    
+    <br>
+    <h5 style="text-align: center;">Notunuz: {{result}}</h5>
 
     <div style = "margin-top : 100px; margin-bottom:100px;" class = "container">
         <div id="chartFalse" style="height: 370px; width: 100%;"></div>
