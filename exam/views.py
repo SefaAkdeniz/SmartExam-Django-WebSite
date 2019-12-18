@@ -21,23 +21,36 @@ def stat(request):
         year,month,day=request.POST["date"].split("-")
         falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False,date__year=year,date__month=month,date__day=day)
         truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True,date__year=year,date__month=month,date__day=day) 
+
+        dateLog=[]
+        PastQuestions = Student_Log.objects.filter(user=request.user,)
+        for each in PastQuestions:
+            dateLog.append(str(each.date)[0:10])
+    
+        output = []
+        for x in dateLog:
+            if x not in output:
+                output.append(x)
+        dateLog=output
+        dateLog.remove(request.POST["date"])
+        dateLog.insert(0,request.POST["date"])
     else:
         falsePastQuestions = Student_Log.objects.filter(user=request.user, answer=False)
-        truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)   
+        truePastQuestions = Student_Log.objects.filter(user=request.user, answer=True)
+
+        dateLog=[]
+        PastQuestions = Student_Log.objects.filter(user=request.user,)
+        for each in PastQuestions:
+            dateLog.append(str(each.date)[0:10])
+    
+        output = []
+        for x in dateLog:
+            if x not in output:
+                output.append(x)
+        dateLog=output
 
     falseCount=0
     trueCount=0
-
-    dateLog=[]
-    PastQuestions = Student_Log.objects.filter(user=request.user,)
-    for each in PastQuestions:
-      dateLog.append(str(each.date)[0:10])
-    
-    output = []
-    for x in dateLog:
-        if x not in output:
-            output.append(x)  
-    dateLog=output
 
     dateArray = ""
     for date in dateLog:
@@ -67,11 +80,9 @@ def stat(request):
         categoryTrue.append(value)
         trueCategoryLabel += "*-*" + key
 
-    print(falseCount)
-    print(trueCount)
-    result=(trueCount/(falseCount+trueCount))*100
-    print(result)
-    
+    result=str((trueCount/(falseCount+trueCount))*100)
+    result=result.split(".")[0]
+       
     return render(request,'stat.html',{"falseCategoryLabel":falseCategoryLabel,"categoryFalse":categoryFalse,"trueCategoryLabel":trueCategoryLabel,"categoryTrue":categoryTrue,"dateLog":dateArray,"result":result})
 
 @login_required(login_url="login")
