@@ -1,1 +1,1 @@
-# SmartExam Django WebSite & WhiteBox Test
+# Smart Exam Django WebSite
