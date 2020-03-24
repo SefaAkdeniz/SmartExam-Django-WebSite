@@ -1,5 +1,5 @@
 # Smart Exam Django WebSite
-<b>Used</b>
+<b>Used Technology:</b>
 <ol>
 <li>Python</li>
 <li>Django</li>
